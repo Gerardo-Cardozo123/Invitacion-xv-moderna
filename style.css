@@ -1,0 +1,562 @@
+/* --- 1. CONFIGURACIÓN Y FUENTES --- */
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600;700&family=Nunito:wght@300;400;700&display=swap');
+
+:root {
+    --dorado: #d4af37;
+    --dorado-suave: #fcf9f0;
+    --texto: #4a4a4a;
+    --blanco: #ffffff;
+    --sombra: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fdfaf6;
+    color: var(--texto);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* --- 2. TIPOGRAFÍA GLOBAL --- */
+h1, h2 {
+    font-family: 'Great Vibes', cursive;
+    color: var(--dorado);
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+h1 { font-size: 4.5rem; margin-bottom: 10px; }
+h2 { font-size: 2.8rem; margin-bottom: 20px; }
+
+h2::before, h2::after {
+    content: "";
+    height: 1px;
+    width: 60px;
+    background-color: var(--dorado);
+    opacity: 0.4;
+}
+
+/* --- 3. ESTRUCTURA DE SECCIONES --- */
+section {
+    padding: 80px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* --- 4. PORTADA (HEADER) --- */
+.portada {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3));
+}
+
+.foto-principal {
+    width: 280px;
+    height: 380px;
+    border-radius: 150px 150px 20px 20px;
+    border: 8px solid var(--blanco);
+    box-shadow: var(--sombra);
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.foto-principal img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- 5. REPRODUCTOR DE MÚSICA (ESTILO SPOTIFY ELEGANTE) --- */
+.reproductor-musica {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 25px;
+    border-radius: 25px;
+    max-width: 340px;
+    margin: 20px auto 50px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* Forzamos Montserrat en el título del reproductor */
+.reproductor-musica h1 {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    color: var(--texto);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.reproductor-musica p {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+#progreso {
+    width: 100%;
+    height: 5px;
+    accent-color: var(--dorado);
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.reproductor-musica .controles {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.reproductor-musica .controles button {
+    background: none;
+    border: none;
+    color: var(--dorado);
+    font-size: 2.2rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.reproductor-musica .boton-reproducir-pausar {
+    font-size: 3.2rem !important;
+}
+
+.reproductor-musica .controles button:hover {
+    transform: scale(1.1);
+}
+
+/* --- 6. TICKET Y CONTADOR --- */
+.ticket {
+    display: inline-block;
+    background: var(--dorado-suave);
+    border: 2px dashed var(--dorado);
+    padding: 30px;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.ticket strong {
+    display: block;
+    font-size: 2.5rem;
+    color: var(--dorado);
+}
+
+.contador #contador {
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.calendario-container {
+    margin-top: 40px; /* Aumentamos la distancia */
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn-calendario {
+    background-color: transparent;
+    color: var(--dorado); /* O el color que uses para los textos importantes */
+    border: 1px solid var(--dorado);
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-family: inherit;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-calendario:hover {
+    background-color: var(--dorado);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-calendario i {
+    font-size: 1.2rem;
+}
+
+.pases {
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.pases h2 {
+    font-size: 2.8rem;
+    line-height: 1.3;
+    margin: 0;
+    display: block; 
+}
+
+/* Este es el contenedor que impide que el signo se separe */
+.wrapper-nombre {
+    white-space: nowrap; /* PROHIBIDO que el contenido de adentro se rompa en dos líneas */
+    display: inline-block; 
+    color: var(--dorado);
+}
+
+#nombre-invitado {
+    display: inline; /* Ahora es parte del mismo flujo que el signo "!" */
+    color: var(--dorado);
+}
+
+
+
+/* --- 7. GALERÍA --- */
+.contenedor-fotos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.foto {
+    aspect-ratio: 1 / 1;
+    border-radius: 15px;
+    border: 5px solid var(--blanco);
+    box-shadow: var(--sombra);
+    overflow: hidden;
+}
+
+.foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 10%;
+    transition: transform 0.5s ease;
+}
+
+.foto:nth-child(1) img { object-position: center 60%; }
+.foto:hover img { transform: scale(1.1); }
+
+/* --- 8. LOGÍSTICA --- */
+.mapa-container {
+    border-radius: 25px; /* Bordes redondeados elegantes */
+    overflow: hidden;    /* Esto es vital para que el mapa respete el redondeado */
+    box-shadow: var(--sombra);
+    margin: 30px auto;
+    border: 5px solid var(--blanco); /* Marco blanco tipo cuadro */
+    max-width: 100%;    /* Evita que se salga de la pantalla */
+}
+
+
+.btn-confirmar, .btn-link {
+    background-color: var(--dorado);
+    color: white;
+    text-decoration: none;
+    padding: 18px 40px;
+    border-radius: 50px;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 30px;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+    transition: all 0.3s ease;
+}
+
+/* --- 9. PROGRAMA (ZIGZAG) --- */
+.programa ul {
+    list-style: none;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    padding: 40px 0;
+}
+
+.programa ul::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background-color: var(--dorado);
+    opacity: 0.3;
+    transform: translateX(-50%);
+}
+
+.programa li {
+    position: relative;
+    width: 50%;
+    padding: 20px 40px;
+}
+
+.programa li::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    background-color: var(--dorado);
+    border: 3px solid #fdfaf6;
+    border-radius: 50%;
+    transform: translateY(-50%);
+}
+
+.programa li:nth-child(odd) { left: 50%; text-align: left; }
+.programa li:nth-child(odd)::after { left: -8px; }
+
+.programa li:nth-child(even) { left: 0; text-align: right; }
+.programa li:nth-child(even)::after { right: -8px; }
+
+/* --- 10. RESPONSIVE --- */
+@media (max-width: 600px) {
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.2rem; }
+    
+    .programa ul::before { left: 30px; transform: none; }
+    .programa li {
+        width: 100%;
+        left: 0 !important;
+        text-align: left !important;
+        padding-left: 60px;
+    }
+    .programa li::after { left: 22px !important; }
+}
+
+
+/* --- ESTILOS ESPECÍFICOS PARA DRESS CODE --- */
+
+.dress-code-container {
+    display: flex;
+    align-items: center; /* Centra verticalmente texto e imagen */
+    justify-content: center; /* Centra horizontalmente */
+    gap: 40px; /* Espacio entre el texto y la foto */
+    margin-top: 30px;
+    text-align: left; /* Alinea el texto a la izquierda para mayor elegancia */
+}
+
+/* Estilos para el bloque de información */
+.dress-code-info {
+    flex: 1; /* Ocupa espacio proporcional */
+    max-width: 400px;
+}
+
+.dress-code-info .icono-formal {
+    font-size: 2.5rem;
+    color: var(--dorado);
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.dress-code-info p {
+    font-family: 'Nunito', sans-serif;
+    color: var(--texto);
+    margin-bottom: 15px;
+}
+
+.dress-code-info strong {
+    font-size: 1.4rem;
+    color: var(--dorado);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.dress-code-info .nota-color {
+    font-size: 0.85rem;
+    color: #888; /* Un gris más suave para la nota */
+    font-style: italic;
+}
+/*Modal de rechazo*/
+.btn-secundario {
+    background-color: transparent;
+    color: #888;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-family: inherit;
+}
+/* Estilos para el bloque de confirmación */
+.confirmacion-card {
+    background: rgba(255, 255, 255, 0.9); /* Blanco casi sólido */
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 450px;
+    margin: 40px auto;
+    text-align: center;
+    border: 1px solid var(--dorado);
+}
+
+.selector-pases {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#pases-confirmados {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+}
+
+.botones-confirmacion {
+    display: flex;
+    flex-direction: column; /* Uno debajo del otro en móvil */
+    gap: 15px;
+}
+
+.btn-principal, .btn-secundario {
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: 'Nunito', sans-serif;
+}
+
+.btn-principal {
+    background-color: #25d366; /* Verde WhatsApp */
+    color: white;
+}
+
+.btn-secundario {
+    background-color: #f1f1f1;
+    color: #777;
+}
+
+.btn-principal:hover { transform: scale(1.03); background-color: #128c7e; }
+.btn-secundario:hover { background-color: #e0e0e0; }
+
+/* Estilos para el bloque de la imagen */
+.dress-code-imagen {
+    flex: 1; /* Ocupa espacio proporcional */
+    max-width: 300px; /* Tamaño máximo de la imagen */
+}
+
+.dress-code-imagen img {
+    width: 100%;
+    height: auto; /* Mantiene la proporción */
+    border-radius: 20px; /* Esquinas redondeadas como el resto del diseño */
+    box-shadow: var(--sombra); /* Mismo efecto de sombra */
+    border: 4px solid var(--blanco); /* Marco blanco sutil */
+    display: block;
+}
+
+/* --- RESPONSIVE DRESS CODE (MÓVILES) --- */
+@media (max-width: 768px) {
+    .dress-code-container {
+        flex-direction: column-reverse; /* En celulares, la imagen va PRIMERO */
+        gap: 20px;
+        text-align: center; /* Centra el texto en celulares */
+    }
+
+    .dress-code-info {
+        max-width: 100%;
+    }
+
+    .dress-code-imagen {
+        max-width: 200px; /* Imagen más pequeña en móviles */
+        margin: 0 auto; /* Centra la imagen */
+    }
+}
+
+.modal-oculto {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    align-items: center; justify-content: center;
+}
+
+.modal-contenido {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 85%;
+    animation: aparecer 0.3s ease;
+}
+
+.modal-contenido i { font-size: 3rem; color: #25d366; }
+.modal-contenido button {
+    background: #25d366; color: white; border: none;
+    padding: 10px 20px; border-radius: 10px; margin-top: 15px;
+}
+
+@keyframes aparecer {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.pie-pagina {
+    text-align: center;
+    padding: 30px 20px;
+    margin-top: 40px;
+    background: rgba(255, 255, 255, 0.03);
+    /* Fondo casi imperceptible */
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+/* Ajuste del Logo */
+.logo-autor {
+    height: 25px;
+    /* Ajusta este valor (20px o 30px) según qué tan pequeño lo quieras */
+    width: auto;
+    /* Mantiene la proporción para que no se deforme */
+    vertical-align: middle;
+    /* Lo alinea con el texto "Desarrollado por" */
+    margin-left: 8px;
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.1));
+    /* Sombra suave para el logo */
+}
+
+/* Ajuste de las letras */
+.pie-pagina p {
+    font-size: 0.75rem;
+    /* Letras más pequeñas (el estándar es 1rem) */
+    color: #888;
+    /* Color gris suave para que sea discreto */
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+    min-height: 30px; /* Esto reserva el espacio para el logo */
+}
+
+.btn-contacto {
+    display: inline-block;
+    font-size: 0.7rem;
+    /* Texto del botón también más pequeño */
+    color: var(--dorado);
+    text-decoration: none;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    padding: 6px 16px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.btn-contacto:hover {
+    background-color: var(--dorado);
+    color: white;
+    transform: translateY(-2px);
+}
