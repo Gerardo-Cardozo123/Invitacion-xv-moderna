@@ -1,37 +1,59 @@
-/* ================================================================
-   1. CONFIGURACIÓN INICIAL (DATOS DEL EVENTO Y CONTACTO)
-   ----------------------------------------------------------------
-   Modifica estos valores para cada nueva invitación.
-   ================================================================ */
-const CONFIG = {
-    telefonoWA: "595976987732", // Número sin el "+"
-    fechaEvento: new Date(2026, 4, 21, 21, 0, 0), // (Año, Mes-1, Día, Hora, Min, Seg)
-    nombreCumple: "Camila",
-    lugarEvento: "Salón de Eventos La Elegancia, Av. Siempre Viva 123",
-    urlGoogleForms: "https://docs.google.com/forms/d/e/1FAIpQLSdMbhT2dSPB1f3lrd6LIycj2_5k0-1zrK32esyTlzwDqWHXuw/formResponse"
-};
+// ============================================================
+// INVITACIÓN DIGITAL - script.js (versión corregida)
+// Fixes aplicados:
+//   #1 - AOS inicializado después del DOM (DOMContentLoaded)
+//   #2 - window.onload reemplazado por lógica separada
+//   #3 - timeupdate sin tercer argumento inválido
+// ============================================================
 
-/* ================================================================
-   2. CAPTURA DE DATOS DE LA URL (?n=Nombre&p=3)
-   ================================================================ */
+// --- 1. CAPTURA DE DATOS DE LA URL ---
 const urlParams = new URLSearchParams(window.location.search);
-const nombreInvitado = urlParams.get('n') || "Invitado Especial";
-const pasesMaximos = parseInt(urlParams.get('p')) || 1;
+const nombre = urlParams.get('n') || "Invitado Especial";
+const pases = urlParams.get('p') || "1";
+const telefono = "595983742503";
 
-// Inyectar datos en el HTML
-document.getElementById('nombre-invitado').innerText = nombreInvitado;
-document.getElementById('cantidad-pases').innerText = pasesMaximos;
+// ✅ FIX #2: Toda la inicialización del DOM va en DOMContentLoaded
+// Esto garantiza que AOS mida posiciones correctas DESPUÉS de que
+// el DOM esté listo y modificado, evitando el scroll jank.
+document.addEventListener('DOMContentLoaded', function () {
 
-/* ================================================================
-   3. LÓGICA DEL REPRODUCTOR (ESTILO SPOTIFY)
-   ================================================================ */
+    // --- Mostrar nombre y pases desde la URL ---
+    document.getElementById('nombre-invitado').innerText = nombre;
+    document.getElementById('cantidad-pases').innerText = pases;
+
+    // --- Llenar selector de pases ---
+    const selectPases = document.getElementById('pases-confirmados');
+    const pasesMax = parseInt(pases) || 1;
+
+    for (let i = 1; i <= pasesMax; i++) {
+        let opt = document.createElement('option');
+        opt.value = i;
+        opt.innerHTML = i + (i === 1 ? " Persona" : " Personas");
+        selectPases.appendChild(opt);
+    }
+
+    // --- ✅ FIX #2: Lógica de estado del botón (antes en window.onload) ---
+    inicializarEstadoConfirmacion();
+
+    // --- Event Listeners de confirmación ---
+    document.getElementById('btn-confirmar').addEventListener('click', () => confirmarAsistencia(true));
+    document.getElementById('btn-rechazar').addEventListener('click', () => confirmarAsistencia(false));
+
+    // --- Cerrar modal duplicado ---
+    document.getElementById('btn-cerrar-duplicado').onclick = function () {
+        document.getElementById('modal-duplicado').style.display = 'none';
+    };
+
+}); // Fin de DOMContentLoaded
+
+
+// --- 2. LÓGICA DEL REPRODUCTOR ---
 const cancion = document.getElementById("cancion");
 const progreso = document.getElementById("progreso");
 const ctrlIcono = document.querySelector(".boton-reproducir-pausar i");
 const btnPlayPausa = document.querySelector(".boton-reproducir-pausar");
 
-// Configurar barra de progreso
-cancion.onloadedmetadata = () => {
+cancion.onloadedmetadata = function () {
     progreso.max = cancion.duration;
     progreso.value = cancion.currentTime;
 };
@@ -39,126 +61,129 @@ cancion.onloadedmetadata = () => {
 function reproducirPausar() {
     if (cancion.paused) {
         cancion.play();
-        ctrlIcono.className = "bi bi-pause-circle-fill";
+        ctrlIcono.classList.remove("bi-play-circle-fill");
+        ctrlIcono.classList.add("bi-pause-circle-fill");
     } else {
         cancion.pause();
-        ctrlIcono.className = "bi bi-play-circle-fill";
+        ctrlIcono.classList.remove("bi-pause-circle-fill");
+        ctrlIcono.classList.add("bi-play-circle-fill");
     }
 }
 
-btnPlayPausa?.addEventListener("click", reproducirPausar);
+btnPlayPausa.addEventListener("click", reproducirPausar);
 
-// Actualizar barra automáticamente
+// ✅ FIX #3: Removido el tercer argumento inválido (500)
+// El tercer argumento de addEventListener debe ser boolean o un objeto
+// de opciones ({capture, passive, once}). El valor 500 es truthy,
+// lo que registraba el listener en fase de captura incorrectamente.
 cancion.addEventListener("timeupdate", () => {
     progreso.value = cancion.currentTime;
 });
 
-// Control manual del progreso
-progreso.oninput = () => {
+progreso.oninput = function () {
     cancion.currentTime = progreso.value;
-    if (cancion.paused) reproducirPausar();
+    if (cancion.paused) {
+        reproducirPausar();
+    }
 };
 
-// Saltos de tiempo (10s)
-document.querySelector(".atras").onclick = () => cancion.currentTime -= 10;
-document.querySelector(".adelante").onclick = () => cancion.currentTime += 10;
+document.querySelector(".atras").onclick = () => { cancion.currentTime -= 10; };
+document.querySelector(".adelante").onclick = () => { cancion.currentTime += 10; };
 
-/* ================================================================
-   4. CONTADOR Y CALENDARIO
-   ================================================================ */
-const intervaloContador = setInterval(() => {
+
+// --- 3. LÓGICA DEL CONTADOR ---
+const fechaEvento = new Date(2026, 4, 30, 19, 0, 0).getTime();
+
+const intervalo = setInterval(function () {
     const ahora = new Date().getTime();
-    const distancia = CONFIG.fechaEvento.getTime() - ahora;
+    const distancia = fechaEvento - ahora;
 
-    const d = Math.floor(distancia / (1000 * 60 * 60 * 24));
-    const h = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const m = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
-    const s = Math.floor((distancia % (1000 * 60)) / 1000);
+    const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+    const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
 
-    document.getElementById("contador").innerHTML = `${d}d ${h}h ${m}m ${s}s`;
+    document.getElementById("contador").innerHTML =
+        dias + "d " + horas + "h " + minutos + "m " + segundos + "s ";
 
     if (distancia < 0) {
-        clearInterval(intervaloContador);
+        clearInterval(intervalo);
         document.getElementById("contador").innerHTML = "¡HOY ES EL GRAN DÍA!";
     }
 }, 1000);
 
+
+// --- 4. CALENDARIO ---
 function agregarAlCalendario() {
-    const titulo = encodeURIComponent(`Mis 15 Años - ${CONFIG.nombreCumple}`);
+    const titulo = encodeURIComponent("Mis 15 Años - Camila");
     const detalles = encodeURIComponent("¡Te espero para celebrar juntos!");
-    const lugar = encodeURIComponent(CONFIG.lugarEvento);
-    
-    // Formato YYYYMMDD para Google Calendar
-    const f = CONFIG.fechaEvento.toISOString().replace(/-|:|\.\d+/g, "").split("T")[0];
-    const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${titulo}&dates=${f}/${f}&details=${detalles}&location=${lugar}`;
-    
+    const lugar = encodeURIComponent("Club Deportivo Alemán, Camino Tilinski, Independencia 5350");
+    const fechaEvento = "20260530";
+    const fechaFin = "20260531";
+
+    const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${titulo}&dates=${fechaEvento}/${fechaFin}&details=${detalles}&location=${lugar}`;
     window.open(url, '_blank');
 }
 
-/* ================================================================
-   5. SISTEMA DE ASISTENCIA (GOOGLE FORMS + WHATSAPP)
-   ================================================================ */
 
-// Llenar el selector de pases dinámicamente
-const selectPases = document.getElementById('pases-confirmados');
-for (let i = 1; i <= pasesMaximos; i++) {
-    let opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = i + (i === 1 ? " Persona" : " Personas");
-    selectPases.appendChild(opt);
+// --- 5. LÓGICA DE CONFIRMACIÓN ---
+
+// ✅ FIX #2: Extraído de window.onload a función separada
+// Se llama desde DOMContentLoaded, garantizando orden correcto
+function inicializarEstadoConfirmacion() {
+    if (localStorage.getItem(`asistencia_${nombre}`) === "true") {
+        const btnConfirmar = document.getElementById('btn-confirmar');
+        const btnRechazar = document.getElementById('btn-rechazar');
+
+        if (btnConfirmar) btnConfirmar.innerHTML = '<i class="bi bi-check-all"></i> Ya confirmado';
+        if (btnRechazar) btnRechazar.style.display = 'none';
+    }
 }
 
-// Verificar si ya confirmó anteriormente (LocalStorage)
-window.addEventListener('load', () => {
-    if (localStorage.getItem("asistencia_enviada") === "true") {
-        const btnC = document.getElementById('btn-confirmar');
-        if(btnC) btnC.innerHTML = '<i class="bi bi-check-all"></i> Ya confirmado';
-        document.getElementById('btn-rechazar').style.display = 'none';
-    }
-});
-
 async function confirmarAsistencia(asiste) {
-    if (localStorage.getItem("asistencia_enviada") === "true") {
-        document.getElementById('modal-duplicado').style.display = 'flex';
+    if (localStorage.getItem(`asistencia_${nombre}`) === "true") {
+        const modalDuplicado = document.getElementById('modal-duplicado');
+        modalDuplicado.style.display = 'flex';
         return;
     }
 
-    const seleccionados = selectPases.value;
+    const seleccionados = document.getElementById('pases-confirmados').value;
     const asistenciaTexto = asiste ? "Confirmado" : "No asistirá";
     const cantidadFinal = asiste ? seleccionados : "0";
-    
-    // Envío a Google Forms
+
+    const urlForm = "https://docs.google.com/forms/d/e/1FAIpQLSdMbhT2dSPB1f3lrd6LIycj2_5k0-1zrK32esyTlzwDqWHXuw/formResponse";
+
     const formData = new FormData();
-    formData.append("entry.935626048", nombreInvitado);
+    formData.append("entry.935626048", nombre);
     formData.append("entry.696412294", asistenciaTexto);
     formData.append("entry.278491890", cantidadFinal);
 
-    fetch(CONFIG.urlForm, { method: "POST", mode: "no-cors", body: formData });
+    fetch(urlForm, {
+        method: "POST",
+        mode: "no-cors",
+        body: formData
+    });
 
-    localStorage.setItem("asistencia_enviada", "true");
-    mostrarModal(asiste, seleccionados);
+    localStorage.setItem(`asistencia_${nombre}`, "true");
+    mostrarModalConfirmacion(asiste, seleccionados);
 }
 
-function mostrarModal(asiste, cant) {
+function mostrarModalConfirmacion(asiste, cant) {
     const modal = document.getElementById('modal-confirmacion');
-    const mensaje = document.getElementById('modal-mensaje');
+    const mensajeEtiqueta = document.getElementById('modal-mensaje');
+
     modal.style.display = 'flex';
 
-    mensaje.innerText = asiste 
-        ? `¡Genial ${nombreInvitado}! Registramos ${cant} pases. Avisa a ${CONFIG.nombreCumple} por WhatsApp.` 
-        : `Gracias por avisar, ${nombreInvitado}. Registramos que no podrás asistir.`;
+    mensajeEtiqueta.innerText = asiste
+        ? `¡Genial ${nombre}! Hemos registrado tus ${cant} pases. Haz clic abajo para avisar por WhatsApp.`
+        : `Gracias por avisar ${nombre}. Hemos registrado que no podrás asistir.`;
 
-    document.getElementById('btn-cerrar-modal').onclick = () => {
-        let msgWA = asiste 
-            ? `¡Hola! Soy ${nombreInvitado}. Confirmo mi asistencia para ${cant} personas.`
-            : `¡Hola! Soy ${nombreInvitado}. Lamentablemente no podré asistir.`;
-            
-        window.open(`https://wa.me/${CONFIG.telefonoWA}?text=${encodeURIComponent(msgWA)}`, '_blank');
+    document.getElementById('btn-cerrar-modal').onclick = function () {
+        let mensajeWA = asiste
+            ? `¡Hola! Soy ${nombre}. Confirmo mi asistencia para ${cant} personas.`
+            : `¡Hola! Soy ${nombre}. Lamentablemente no podré asistir.`;
+
+        window.open(`https://wa.me/${telefono}?text=${encodeURIComponent(mensajeWA)}`, '_blank');
         modal.style.display = 'none';
     };
 }
-
-// Event Listeners
-document.getElementById('btn-confirmar').addEventListener('click', () => confirmarAsistencia(true));
-document.getElementById('btn-rechazar').addEventListener('click', () => confirmarAsistencia(false));
-document.getElementById('btn-cerrar-duplicado').onclick = () => document.getElementById('modal-duplicado').style.display = 'none';

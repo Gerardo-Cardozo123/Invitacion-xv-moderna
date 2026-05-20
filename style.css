@@ -15,12 +15,16 @@
     box-sizing: border-box;
 }
 
+/* ✅ FIX #3: position:relative + scroll suave para iOS/Safari */
 body {
     font-family: 'Montserrat', sans-serif;
     background-color: #fdfaf6;
     color: var(--texto);
     line-height: 1.6;
     overflow-x: hidden;
+    position: relative;                      /* FIX: evita bug de overflow en Safari */
+    -webkit-overflow-scrolling: touch;       /* FIX: scroll fluido en iOS */
+    scroll-behavior: smooth;                 /* MEJORA: scroll suavizado globalmente */
 }
 
 /* --- 2. TIPOGRAFÍA GLOBAL --- */
@@ -55,7 +59,9 @@ section {
 
 /* --- 4. PORTADA (HEADER) --- */
 .portada {
-    height: 100vh;
+    /* ✅ FIX #1: min-height en lugar de height para evitar reflow */
+    min-height: 100vh;
+    min-height: 100dvh; /* FIX: unidad dinámica para Safari/iOS (barra de URL) */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -71,6 +77,8 @@ section {
     box-shadow: var(--sombra);
     overflow: hidden;
     margin: 20px 0;
+    /* ✅ FIX #5: hint de composición GPU */
+    will-change: transform;
 }
 
 .foto-principal img {
@@ -92,7 +100,6 @@ section {
     box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
 
-/* Forzamos Montserrat en el título del reproductor */
 .reproductor-musica h1 {
     font-family: 'Montserrat', sans-serif !important;
     font-size: 1.2rem !important;
@@ -130,6 +137,7 @@ section {
     color: var(--dorado);
     font-size: 2.2rem;
     cursor: pointer;
+    /* ✅ MEJORA: usar transform en lugar de propiedades que causan reflow */
     transition: transform 0.2s ease;
 }
 
@@ -149,6 +157,8 @@ section {
     padding: 30px;
     border-radius: 20px;
     margin-top: 20px;
+    /* ✅ FIX #5: GPU hint */
+    will-change: transform;
 }
 
 .ticket strong {
@@ -164,7 +174,7 @@ section {
 }
 
 .calendario-container {
-    margin-top: 40px; /* Aumentamos la distancia */
+    margin-top: 40px;
     display: flex;
     justify-content: center;
     width: 100%;
@@ -172,7 +182,7 @@ section {
 
 .btn-calendario {
     background-color: transparent;
-    color: var(--dorado); /* O el color que uses para los textos importantes */
+    color: var(--dorado);
     border: 1px solid var(--dorado);
     padding: 10px 25px;
     border-radius: 50px;
@@ -202,29 +212,41 @@ section {
     box-shadow: none !important;
     width: 100%;
     text-align: center;
-    padding: 20px 0;
+    padding: 40px 20px; /* Un poco más de espacio arriba y abajo respira mejor */
+    box-sizing: border-box;
 }
 
 .pases h2 {
     font-size: 2.8rem;
     line-height: 1.3;
-    margin: 0;
-    display: block; 
+    margin-bottom: 20px; /* Espacio antes del párrafo */
+    display: block;
+    font-weight: 300; /* Hace que la tipografía se vea más fina y elegante */
 }
 
-/* Este es el contenedor que impide que el signo se separe */
 .wrapper-nombre {
-    white-space: nowrap; /* PROHIBIDO que el contenido de adentro se rompa en dos líneas */
-    display: inline-block; 
+    white-space: nowrap;
+    display: inline-block;
     color: var(--dorado);
+    font-weight: 700; /* Resalta el nombre del invitado en negrita */
 }
 
 #nombre-invitado {
-    display: inline; /* Ahora es parte del mismo flujo que el signo "!" */
+    display: inline;
     color: var(--dorado);
+    text-transform: capitalize; /* Asegura que la primera letra siempre sea mayúscula */
 }
 
-
+/* El nuevo párrafo emotivo */
+.pases p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--texto-oscuro, #444); /* Color suave para que no compita con el nombre */
+    max-width: 500px; /* Evita que el texto se estire mucho en pantallas anchas */
+    margin: 0 auto 30px auto; /* Centra el bloque de texto y da espacio abajo */
+    font-style: italic; /* El estilo itálico (cursiva) le da el toque poético de invitación */
+    padding: 0 15px;
+}
 
 /* --- 7. GALERÍA --- */
 .contenedor-fotos {
@@ -240,6 +262,8 @@ section {
     border: 5px solid var(--blanco);
     box-shadow: var(--sombra);
     overflow: hidden;
+    /* ✅ FIX #5: GPU compositing layer para hover suave */
+    will-change: transform;
 }
 
 .foto img {
@@ -253,16 +277,41 @@ section {
 .foto:nth-child(1) img { object-position: center 60%; }
 .foto:hover img { transform: scale(1.1); }
 
-/* --- 8. LOGÍSTICA --- */
-.mapa-container {
-    border-radius: 25px; /* Bordes redondeados elegantes */
-    overflow: hidden;    /* Esto es vital para que el mapa respete el redondeado */
-    box-shadow: var(--sombra);
-    margin: 30px auto;
-    border: 5px solid var(--blanco); /* Marco blanco tipo cuadro */
-    max-width: 100%;    /* Evita que se salga de la pantalla */
+/* Ajustes individuales para centrar o desplazar cada imagen */
+
+/* Foto 1 (Galeria1) */
+.foto:nth-child(1) img { 
+    object-position: center 40%; 
 }
 
+/* Foto 2 (Galeria2) */
+.foto:nth-child(2) img { 
+    object-position: center 65%; /* Subí o bajá este % a tu gusto */
+}
+
+/* Foto 3 (Galeria3) */
+.foto:nth-child(3) img { 
+    object-position: center 50%; /* 50% es el centro perfecto vertical */
+}
+
+/* Foto 4 (Galeria4) */
+.foto:nth-child(4) img { 
+    object-position: center 55%; 
+}
+
+/* Foto 5 (Galeria5) */
+.foto:nth-child(5) img { 
+    object-position: center 70%; 
+}
+/* --- 8. LOGÍSTICA --- */
+.mapa-container {
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: var(--sombra);
+    margin: 30px auto;
+    border: 5px solid var(--blanco);
+    max-width: 100%;
+}
 
 .btn-confirmar, .btn-link {
     background-color: var(--dorado);
@@ -277,81 +326,151 @@ section {
     transition: all 0.3s ease;
 }
 
-/* --- 9. PROGRAMA (ZIGZAG) --- */
+/* --- 9. PROGRAMA DE LA NOCHE (mobile-first) --- */
+
+/* Base móvil: timeline vertical con línea a la izquierda */
 .programa ul {
     list-style: none;
-    max-width: 800px;
     margin: 0 auto;
+    max-width: 500px;
+    padding: 8px 0 8px 36px; /* el padding-left crea espacio para la línea */
     position: relative;
-    padding: 40px 0;
 }
 
+/* Línea vertical anclada a la izquierda */
 .programa ul::before {
     content: "";
     position: absolute;
-    left: 50%;
-    top: 0;
+    left: 9px;
+    top: 12px;
+    bottom: 12px;
     width: 2px;
-    height: 100%;
-    background-color: var(--dorado);
-    opacity: 0.3;
-    transform: translateX(-50%);
+    background: linear-gradient(
+        to bottom,
+        var(--dorado) 0%,
+        rgba(212, 175, 55, 0.15) 100%
+    );
+    border-radius: 2px;
+    /* anulamos el transform que tenía antes */
+    transform: none;
 }
 
 .programa li {
     position: relative;
-    width: 50%;
-    padding: 20px 40px;
+    /* layout en flujo normal, sin left: 50% */
+    width: 100%;
+    left: auto;
+    text-align: left;
+    padding: 0 0 30px 0;
+    /* anulamos la sobreescritura anterior */
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    will-change: opacity, transform;   /* reserva capa GPU antes de la animación */
+    backface-visibility: hidden;       /* evita flickering en iOS durante transform */
 }
 
+.programa li:last-child {
+    padding-bottom: 0;
+}
+
+/* Punto dorado — anclado a la línea izquierda */
 .programa li::after {
     content: "";
     position: absolute;
-    top: 50%;
-    width: 16px;
-    height: 16px;
+    left: -31px;
+    right: auto;           /* anula el right: -8px del even anterior */
+    top: 5px;
+    width: 14px;
+    height: 14px;
     background-color: var(--dorado);
     border: 3px solid #fdfaf6;
     border-radius: 50%;
-    transform: translateY(-50%);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    transform: none;       /* anula el translateY(-50%) anterior */
 }
 
-.programa li:nth-child(odd) { left: 50%; text-align: left; }
-.programa li:nth-child(odd)::after { left: -8px; }
+/* Hora y texto como elementos visuales separados */
+.programa li .hora {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--dorado);
+    letter-spacing: 0.6px;
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1;
+}
 
-.programa li:nth-child(even) { left: 0; text-align: right; }
-.programa li:nth-child(even)::after { right: -8px; }
+.programa li .evento {
+    font-size: 1rem;
+    color: var(--texto);
+    font-family: 'Nunito', sans-serif;
+    line-height: 1.4;
+}
 
-/* --- 10. RESPONSIVE --- */
-@media (max-width: 600px) {
-    h1 { font-size: 3rem; }
-    h2 { font-size: 2.2rem; }
-    
-    .programa ul::before { left: 30px; transform: none; }
-    .programa li {
-        width: 100%;
-        left: 0 !important;
-        text-align: left !important;
-        padding-left: 60px;
+/* Desktop: zigzag con CSS Grid — sin position tricks */
+@media (min-width: 768px) {
+    .programa ul {
+        display: grid;
+        grid-template-columns: 1fr 30px 1fr;
+        max-width: 800px;
+        padding: 0;        /* el grid maneja el espaciado */
     }
-    .programa li::after { left: 22px !important; }
+
+    /* La línea central ocupa la columna del medio */
+    .programa ul::before {
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-50%);
+    }
+
+    /* Items impares: columna izquierda, texto alineado a la derecha */
+    .programa li:nth-child(odd) {
+        grid-column: 1;
+        text-align: right;
+        align-items: flex-end;
+        padding: 0 36px 40px 0;
+    }
+
+    .programa li:nth-child(odd)::after {
+        left: auto;
+        right: -23px;
+        top: 5px;
+    }
+
+    /* Items pares: columna derecha, texto alineado a la izquierda */
+    .programa li:nth-child(even) {
+        grid-column: 3;
+        text-align: left;
+        align-items: flex-start;
+        padding: 0 0 40px 36px;
+    }
+
+    .programa li:nth-child(even)::after {
+        left: -23px;
+        right: auto;
+        top: 5px;
+    }
+
+    /* Filas explícitas para el zigzag correcto */
+    .programa li:nth-child(1) { grid-row: 1; }
+    .programa li:nth-child(2) { grid-row: 2; }
+    .programa li:nth-child(3) { grid-row: 3; }
+    .programa li:nth-child(4) { grid-row: 4; }
 }
 
-
-/* --- ESTILOS ESPECÍFICOS PARA DRESS CODE --- */
-
+/* --- DRESS CODE --- */
 .dress-code-container {
     display: flex;
-    align-items: center; /* Centra verticalmente texto e imagen */
-    justify-content: center; /* Centra horizontalmente */
-    gap: 40px; /* Espacio entre el texto y la foto */
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
     margin-top: 30px;
-    text-align: left; /* Alinea el texto a la izquierda para mayor elegancia */
+    text-align: left;
 }
 
-/* Estilos para el bloque de información */
 .dress-code-info {
-    flex: 1; /* Ocupa espacio proporcional */
+    flex: 1;
     max-width: 400px;
 }
 
@@ -377,10 +496,10 @@ section {
 
 .dress-code-info .nota-color {
     font-size: 0.85rem;
-    color: #888; /* Un gris más suave para la nota */
+    color: #888;
     font-style: italic;
 }
-/*Modal de rechazo*/
+
 .btn-secundario {
     background-color: transparent;
     color: #888;
@@ -391,9 +510,10 @@ section {
     cursor: pointer;
     font-family: inherit;
 }
-/* Estilos para el bloque de confirmación */
+
+/* --- CONFIRMACIÓN --- */
 .confirmacion-card {
-    background: rgba(255, 255, 255, 0.9); /* Blanco casi sólido */
+    background: rgba(255, 255, 255, 0.9);
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -401,6 +521,8 @@ section {
     margin: 40px auto;
     text-align: center;
     border: 1px solid var(--dorado);
+    /* ✅ FIX #5: GPU hint para la card de confirmación */
+    will-change: transform;
 }
 
 .selector-pases {
@@ -421,7 +543,7 @@ section {
 
 .botones-confirmacion {
     display: flex;
-    flex-direction: column; /* Uno debajo del otro en móvil */
+    flex-direction: column;
     gap: 15px;
 }
 
@@ -436,7 +558,7 @@ section {
 }
 
 .btn-principal {
-    background-color: #25d366; /* Verde WhatsApp */
+    background-color: #25d366;
     color: white;
 }
 
@@ -448,39 +570,31 @@ section {
 .btn-principal:hover { transform: scale(1.03); background-color: #128c7e; }
 .btn-secundario:hover { background-color: #e0e0e0; }
 
-/* Estilos para el bloque de la imagen */
 .dress-code-imagen {
-    flex: 1; /* Ocupa espacio proporcional */
-    max-width: 300px; /* Tamaño máximo de la imagen */
+    flex: 1;
+    max-width: 300px;
 }
 
 .dress-code-imagen img {
     width: 100%;
-    height: auto; /* Mantiene la proporción */
-    border-radius: 20px; /* Esquinas redondeadas como el resto del diseño */
-    box-shadow: var(--sombra); /* Mismo efecto de sombra */
-    border: 4px solid var(--blanco); /* Marco blanco sutil */
+    height: auto;
+    border-radius: 20px;
+    box-shadow: var(--sombra);
+    border: 4px solid var(--blanco);
     display: block;
 }
 
-/* --- RESPONSIVE DRESS CODE (MÓVILES) --- */
 @media (max-width: 768px) {
     .dress-code-container {
-        flex-direction: column-reverse; /* En celulares, la imagen va PRIMERO */
+        flex-direction: column-reverse;
         gap: 20px;
-        text-align: center; /* Centra el texto en celulares */
+        text-align: center;
     }
-
-    .dress-code-info {
-        max-width: 100%;
-    }
-
-    .dress-code-imagen {
-        max-width: 200px; /* Imagen más pequeña en móviles */
-        margin: 0 auto; /* Centra la imagen */
-    }
+    .dress-code-info { max-width: 100%; }
+    .dress-code-imagen { max-width: 200px; margin: 0 auto; }
 }
 
+/* --- MODALES --- */
 .modal-oculto {
     display: none;
     position: fixed;
@@ -510,43 +624,34 @@ section {
     to { transform: scale(1); opacity: 1; }
 }
 
+/* --- PIE DE PÁGINA --- */
 .pie-pagina {
     text-align: center;
     padding: 30px 20px;
     margin-top: 40px;
     background: rgba(255, 255, 255, 0.03);
-    /* Fondo casi imperceptible */
     border-top: 1px solid rgba(212, 175, 55, 0.1);
 }
 
-/* Ajuste del Logo */
 .logo-autor {
     height: 25px;
-    /* Ajusta este valor (20px o 30px) según qué tan pequeño lo quieras */
     width: auto;
-    /* Mantiene la proporción para que no se deforme */
     vertical-align: middle;
-    /* Lo alinea con el texto "Desarrollado por" */
     margin-left: 8px;
     filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.1));
-    /* Sombra suave para el logo */
 }
 
-/* Ajuste de las letras */
 .pie-pagina p {
     font-size: 0.75rem;
-    /* Letras más pequeñas (el estándar es 1rem) */
     color: #888;
-    /* Color gris suave para que sea discreto */
     margin-bottom: 12px;
     letter-spacing: 0.5px;
-    min-height: 30px; /* Esto reserva el espacio para el logo */
+    min-height: 30px;
 }
 
 .btn-contacto {
     display: inline-block;
     font-size: 0.7rem;
-    /* Texto del botón también más pequeño */
     color: var(--dorado);
     text-decoration: none;
     border: 1px solid rgba(212, 175, 55, 0.4);
